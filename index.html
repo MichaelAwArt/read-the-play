@@ -1,0 +1,651 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Read the Play</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one phone-sized app column, screens swap in place; deep ice-blue night look like the Data-hack banner: blue gradient, icy turquoise data, white text, AwArt red for actions and brand (Anton + Poppins), single dark theme by choice */
+:root{
+  --bg:#061631; --panel:#0D2850; --panel2:#13335F; --line:#25507F;
+  --text:#FFFFFF; --muted:#A9BED6; --data:#4FD3E0; --data-bright:#00CCD9; --accent:#FF1A1A; --accent-ink:#FFFFFF; --accent-deep:#C70000;
+  --ice:#EEF6FA; --rink-red:#D3463C; --rink-blue:#2F6DB5;
+  --davos:#F2C230; --davos-ink:#0A1E3F; --opp:#1A253E; --opp-ink:#FFFFFF;
+  --bad:#7F93B0; --neutral:#C9D6E3; --good:#2FC28C; --exc:#F2C230;
+  --display:'Anton', 'Arial Narrow', Impact, sans-serif;
+  --body:'Poppins', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.45;padding-inline:0}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.app{max-width:440px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:16px 16px 24px;gap:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.score{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:18px;letter-spacing:.5px}
+.score .clock{font-family:var(--body);font-size:13px;color:var(--muted);letter-spacing:0}
+.pts{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.pts b{color:var(--accent)}
+.steps{display:flex;gap:6px}
+.steps span{flex:1;height:4px;border-radius:2px;background:var(--line)}
+.steps span.on{background:var(--accent)}
+.steplabel{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-top:-8px}
+.screen{display:flex;flex-direction:column;gap:16px;flex:1}
+h1,h2{font-family:var(--display);font-weight:600;line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:40px}
+h2{font-size:28px}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:13px;font-weight:600;color:var(--accent);letter-spacing:2px;text-transform:uppercase}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.match{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--display);font-size:20px}
+.team{display:flex;align-items:center;gap:8px;min-width:0}
+.dot{width:14px;height:14px;border-radius:50%;flex:none}
+.btn{border:0;border-radius:12px;padding:16px;font-weight:600;font-size:17px;background:var(--accent);color:var(--accent-ink);width:100%}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn:active{transform:translateY(1px)}
+.spacer{flex:1}
+.note{font-size:12px;color:var(--muted);text-align:center}
+.rink{width:100%;height:auto;display:block;border-radius:12px;background:var(--panel)}
+.rinkwrap{position:relative}
+.live{position:absolute;bottom:8px;left:8px;background:rgba(14,14,16,.82);color:var(--text);font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;letter-spacing:1px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;color:var(--muted)}
+.chip b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.votes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vote{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:14px 8px;font-weight:600;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.vote i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.vote:hover{border-color:var(--muted)}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:100px 1fr 44px;align-items:center;gap:10px;font-size:14px}
+.bar .track{height:14px;background:var(--panel2);border-radius:7px;overflow:hidden}
+.bar .fill{height:100%;border-radius:7px;transition:width .8s ease}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.bar.you .lab{font-weight:600}
+.bar.you .lab::after{content:" · " attr(data-you);color:var(--accent);font-weight:600}
+.tcmp{display:flex;flex-direction:column;gap:10px}
+.trow{display:flex;align-items:center;gap:10px}
+.trow .who{width:56px;font-weight:600;font-size:14px;flex:none}
+.trow .tb{height:30px;border-radius:6px;flex:none;transition:width .9s ease}
+.trow .tv{font-family:var(--display);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.big{font-family:var(--display);font-size:56px;font-weight:700;line-height:1;color:var(--accent)}
+.punch{display:flex;align-items:baseline;gap:12px;border-top:1px solid var(--line);padding-top:12px}
+.verdict{display:flex;align-items:center;gap:12px}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;font-family:var(--display);font-size:16px;color:var(--accent);flex:none}
+.pill{display:inline-block;border-radius:999px;padding:4px 12px;font-weight:600;font-size:14px;color:var(--accent-ink)}
+.tag{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:1px 6px}
+.ledger{display:flex;flex-direction:column;gap:6px;font-size:15px}
+.ledger div{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.ledger .tot{border-top:1px solid var(--line);padding-top:8px;font-weight:600}
+.locked{display:flex;flex-direction:column;gap:8px}
+.locked div{display:flex;align-items:center;gap:10px;padding:12px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:14px}
+.share{background:linear-gradient(160deg,#24345A 0%,#1A253E 70%);color:#FFFFFF;border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.share .lvl{font-family:var(--display);font-size:34px;font-weight:700;line-height:1.05}
+.share .lvl em{font-style:normal;color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats div{display:flex;flex-direction:column;gap:2px}
+.stats b{font-family:var(--display);font-size:24px;font-variant-numeric:tabular-nums}
+.stats span{font-size:12px;color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;font-weight:500;max-width:90%}
+.fade{animation:fade .35s ease both}
+@keyframes fade{from{opacity:.001;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fade{animation:none}.bar .fill,.trow .tb{transition:none}}
+.vid{width:100%;display:block;border-radius:12px;background:#000;aspect-ratio:960/492;max-width:100%}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:8px;padding:8px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--panel2);color:var(--text)}
+.again{position:absolute;bottom:8px;right:8px;border:0;background:rgba(14,14,16,.82);color:var(--text);font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px}
+.mark{position:absolute;width:0;height:0;pointer-events:none}
+.mark::before{content:"";position:absolute;left:-16px;top:-22px;width:32px;height:44px;border:3px solid var(--accent);border-radius:50%;box-shadow:0 0 0 3px rgba(14,14,16,.4)}
+.mark span{position:absolute;left:50%;top:-50px;transform:translateX(-50%);white-space:nowrap;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px}
+.mark span::after{content:"";position:absolute;left:50%;bottom:-5px;margin-left:-5px;border:5px solid transparent;border-bottom:0;border-top-color:var(--accent)}
+.sbars{display:flex;gap:4px}
+.sbars span{flex:1;height:3px;border-radius:2px;background:var(--line)}
+.sbars span.on{background:var(--text)}
+.story{display:flex;flex-direction:column;gap:14px}
+.btn.small{padding:10px;font-size:14px}
+.pcard{gap:10px}
+.pc-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px}
+.pc-top .muted{font-size:13px}
+.pcard .stats{grid-template-columns:repeat(3,1fr);row-gap:10px}
+.pcard .stats b{font-size:20px}
+.topr{display:flex;align-items:center;gap:8px}
+.lang{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px}
+.lang button{border:0;background:transparent;color:var(--muted);font-size:11px;font-weight:600;padding:4px 7px;border-radius:999px}
+.lang button.on{background:var(--panel2);color:var(--text)}
+.score,.pts{white-space:nowrap}
+.top{flex-wrap:nowrap}
+.score{font-size:16px;gap:6px;min-width:0}
+.score .clock{font-size:12px}
+.bar{grid-template-columns:128px 1fr 40px}
+@media (max-width:380px){.score .clock{display:none}}
+h1,h2,.lvl,.big,.tv,.stats b,.score,.wordmark{font-weight:400!important;letter-spacing:.3px}
+h1{font-size:44px;line-height:1.05}
+h2{font-size:30px;line-height:1.1}
+.brandrow{display:flex;align-items:center;gap:12px}
+.logo{width:52px;height:52px;flex:none}
+.brandrow.sm .logo{width:32px;height:32px}
+.wordmark{font-family:var(--display);font-size:24px;line-height:1;text-transform:uppercase}
+.byline{font-size:12px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
+.btn{background:var(--accent);color:var(--accent-ink)}
+.rinkwrap{overflow:hidden;border-radius:12px}
+.stage{position:relative;transition:transform .7s ease}
+.stage.zoomed .mark span{transform:translateX(-50%) scale(.55);transform-origin:bottom center}
+.stage.zoomed .mark::before{border-width:2px}
+.zoomrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.zoomrow .btn{width:auto;padding:8px 16px}
+@media (prefers-reduced-motion:reduce){.stage{transition:none}}
+.share .muted,.share .stats span{color:#B9C4D6}
+.steps span.on,.sbars span.on{background:var(--data-bright)}
+.chip b{color:var(--data)}
+.rink{background:var(--panel2)}
+.card,.vote,.pcard{box-shadow:0 1px 2px rgba(26,37,62,.06)}
+.vote{background:var(--panel)}
+.bar .track{background:var(--panel2)}
+.big{color:var(--accent)}
+.steplabel{color:var(--data)}
+.live,.again{color:#FFFFFF!important;background:rgba(26,37,62,.85)!important}
+@media (max-width:430px){.score .clock{display:none}}
+body{background:radial-gradient(ellipse 90% 45% at 85% -5%,rgba(0,204,217,.28),transparent 60%),radial-gradient(ellipse 80% 50% at -10% 105%,rgba(47,109,181,.38),transparent 60%),linear-gradient(180deg,#0A2650 0%,#061631 55%,#041027 100%);background-attachment:fixed;background-color:#061631}
+.card,.vote,.pcard{box-shadow:none;background:rgba(19,51,95,.72);border-color:rgba(79,211,224,.18)}
+.vote:hover{border-color:var(--data)}
+.btn.ghost{border-color:rgba(79,211,224,.35)}
+.share{background:linear-gradient(160deg,#123E73 0%,#0A2448 70%);border-color:rgba(79,211,224,.3)}
+.locked div{border-color:rgba(79,211,224,.3)}
+h1 em,.wordmark{color:#FFFFFF}
+</style>
+
+<div class="app">
+  <div class="top">
+    <div class="score"><span class="dot" style="background:var(--davos)"></span>USA 0–0 HCD<span class="clock">P1 · 14:59</span></div>
+    <div class="topr"><div class="lang" role="group" aria-label="Language"><button data-l="en">EN</button><button data-l="fr">FR</button><button data-l="de">DE</button></div><div class="pts"><b id="ptsVal">0</b> pts</div></div>
+  </div>
+  <div class="steps" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+  <p class="steplabel" id="stepLabel">Start</p>
+
+  <section class="screen fade" id="s0">
+    <div class="brandrow"><img src="assets/awart-logo.png" alt="AwArt" class="logo"><div><p class="wordmark">Read the Play</p><p class="byline">by AwArt · Spengler Cup</p></div></div>
+    <h1>Can you read the play like a coach?</h1>
+    <p class="muted">We show you a key moment of the game. You judge the player's decision. Then see how the other fans and our hockey expert saw it.</p>
+    <div class="card">
+      <div class="match">
+        <div class="team">U.S. Collegiate Selects<span class="dot" style="background:var(--opp);border:1px solid var(--muted)"></span></div>
+        <span class="muted" style="font-size:15px">vs</span>
+        <div class="team"><span class="dot" style="background:var(--davos)"></span>HC Davos</div>
+      </div>
+      <p class="muted" style="font-size:14px">31 Dec 2025 · Key decision 1 of 3</p>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="startBtn">Watch the play</button>
+    <p class="note">Real game clip and real Wisehockey tracking data. Fan votes and expert text are samples.</p>
+  </section>
+
+  <section class="screen" id="s1" hidden>
+    <div class="rinkwrap" id="vidWrap">
+      <div class="stage" id="stage">
+        <video class="vid" id="vid" muted playsinline preload="auto" src="private/clip.mp4"></video>
+        <div class="mark" id="mark" hidden><span>#72 Kessler</span></div>
+      </div>
+      <span class="live" id="vidTag">LIVE CLIP</span>
+    </div>
+    <div class="rinkwrap" id="rinkWrap" hidden>
+      <svg class="rink" id="rink" viewBox="-31 -16 62 32" role="img" aria-label="Tracking view of the play"></svg>
+      <span class="live">TRACKING VIEW</span>
+    </div>
+    <div id="setupBox" class="screen fade" style="flex:0">
+      <h2>Watch #72 Kessler. He has the puck.</h2>
+      <button class="btn" id="playBtn">▶ Play</button>
+    </div>
+    <div id="playBox" hidden><p class="muted">Watching…</p></div>
+    <div id="zoomBox" hidden class="zoomrow"><p><b>Again, slower and closer</b></p><button class="btn ghost small" id="skipZoom">Skip</button></div>
+    <div id="voteBox" hidden class="screen fade" style="flex:0">
+      <h2>Kessler passes to #44 Stransky. How good was this decision?</h2>
+      <div class="votes">
+        <button class="vote" data-v="0"><i style="background:var(--bad)"></i>Bad</button>
+        <button class="vote" data-v="1"><i style="background:var(--neutral)"></i>Neutral</button>
+        <button class="vote" data-v="2"><i style="background:var(--good)"></i>Good</button>
+        <button class="vote" data-v="3"><i style="background:var(--exc)"></i>Exceptional</button>
+      </div>
+      <div class="row2">
+        <button class="btn ghost small" id="againBtn">↺ Watch again</button>
+        <button class="btn ghost small" id="slowBtn">Slow-mo zoom</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="s2" hidden>
+    <div class="sbars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div class="story" data-i="0">
+      <h2>How the fans saw it</h2>
+      <div class="card">
+        <div class="bars" id="crowdBars"></div>
+        <p class="muted" style="font-size:13px">1,284 fans voted <span class="tag">Sample</span></p>
+      </div>
+    </div>
+    <div class="story" data-i="1" hidden>
+      <h2>Kessler had 1.2 seconds</h2>
+      <div class="card">
+        <p class="muted" style="font-size:14px">From the blue line to the pass</p>
+        <div class="tcmp">
+          <div class="trow"><span class="who">#72</span><div class="tb" id="tbP" style="background:var(--accent)"></div><span class="tv" style="color:var(--accent)">1.2 s</span></div>
+          <div class="trow"><span class="who">You</span><div class="tb" id="tbY" style="background:#8A93A3"></div><span class="tv" id="tvY">–</span></div>
+        </div>
+        <div class="punch"><span class="big" id="ratio">6×</span><p id="ratioTxt"></p></div>
+      </div>
+    </div>
+    <div class="story" data-i="2" hidden>
+      <h2>What Kessler saw</h2>
+      <div class="rinkwrap">
+        <svg class="rink" id="rink2" viewBox="-31 -16 62 32" role="img" aria-label="Tracking view at the moment of the pass"></svg>
+        <span class="live">TRACKING DATA</span>
+      </div>
+      <div class="chips">
+        <span class="chip">Pressure <b>#25 at 1.7 m</b></span>
+        <span class="chip">Speed <b>27 km/h</b></span>
+        <span class="chip">Stransky's space <b>3.4 m</b></span>
+      </div>
+      <div class="card pcard" id="pcard"></div>
+      <p class="muted" style="font-size:13px">Tap any player to see more.</p>
+    </div>
+    <div class="story" data-i="3" hidden>
+      <h2>What came next</h2>
+      <div class="rinkwrap">
+        <video class="vid" id="vid2" muted playsinline preload="auto" src="private/clip.mp4"></video>
+        <span class="live">REPLAY</span>
+        <button class="again" id="again2">↺ Replay</button>
+      </div>
+      <div class="chips">
+        <span class="chip">Stransky shoots <b>0.4 s later</b></span>
+        <span class="chip">Shot <b>95 km/h</b></span>
+        <span class="chip">Result <b>wide · xG 9 %</b></span>
+      </div>
+      <p class="muted" style="font-size:14px">Stransky shoots almost at once, with #22 on him. The shot goes wide.</p>
+    </div>
+    <div class="spacer"></div>
+    <div class="row2">
+      <button class="btn ghost" id="prevStory">Back</button>
+      <button class="btn" id="nextStory">Next</button>
+    </div>
+  </section>
+
+  <section class="screen" id="s3" hidden>
+    <p class="eyebrow">The game goes on</p>
+    <h2>The expert's verdict comes at the final whistle</h2>
+    <p class="muted">Stay with the game. Two more key decisions are coming, and your points add up.</p>
+    <div class="locked">
+      <div>🔒 Key decision 2 · 2nd period</div>
+      <div>🔒 Key decision 3 · 3rd period</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="toVerdict">Jump to the final whistle (demo)</button>
+  </section>
+
+  <section class="screen" id="s4" hidden>
+    <div class="card">
+      <div class="verdict">
+        <div class="avatar">SP</div>
+        <div style="min-width:0;flex:1">
+          <p style="font-weight:600">Serge Pelletier</p>
+          <p class="muted" style="font-size:13px">Former coach and TV consultant</p>
+        </div>
+        <span class="pill" style="background:var(--good)">Good</span>
+      </div>
+      <p>“He pulls the defender towards him, then gives the puck to Stransky, who has more space. Good read. Half a second earlier and Stransky would have had a real shooting lane.”</p>
+      <span class="tag" style="align-self:flex-start">Sample text, to be written by Serge</span>
+    </div>
+    <div class="card ledger" id="ledger"></div>
+    <button class="btn" id="toCard">See my card</button>
+  </section>
+
+  <section class="screen" id="s5" hidden>
+    <div class="share">
+      <div class="brandrow sm"><img src="assets/awart-logo.png" alt="AwArt" class="logo"><p class="eyebrow">Read the Play · by AwArt</p></div>
+      <p class="lvl" id="lvl">I read the play like a <em>Scout</em></p>
+      <div class="stats">
+        <div><b id="cPts">0</b><span>points</span></div>
+        <div><b id="cTime">–</b><span>my decision time</span></div>
+        <div><b>1.2 s</b><span>Kessler's</span></div>
+      </div>
+      <p class="muted" style="font-size:13px" id="cNext">Streak: 1 game in a row</p>
+    </div>
+    <div class="row2">
+      <button class="btn ghost" id="shareBtn">Share card</button>
+      <button class="btn ghost" id="replayBtn">Play again</button>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" id="mvpBtn">Now vote for the MVP</button>
+  </section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<!-- Sample data (public). A local private/sequence.js, never committed, overrides it with real data. -->
+<script src="data/sample-sequence.js"></script>
+<script src="private/sequence.js"></script>
+<script>
+const I18N={
+'Again, slower and closer':['Encore une fois, au ralenti et de plus près','Nochmals, langsamer und näher'],
+'Skip':['Passer','Überspringen'],
+'Slow-mo zoom':['Ralenti zoomé','Zeitlupe mit Zoom'],
+'SLOW MOTION · ZOOM':['RALENTI · ZOOM','ZEITLUPE · ZOOM'],
+'Start':['Départ','Start'],
+'Watch and vote':['Regarder et voter','Schauen und abstimmen'],
+'The reveal':['La révélation','Die Auflösung'],
+'Expert verdict':["Verdict de l'expert",'Expertenurteil'],
+'Your card':['Ta carte','Deine Karte'],
+'Can you read the play like a coach?':['Sauras-tu lire le jeu comme un coach ?','Liest du das Spiel wie ein Coach?'],
+"We show you a key moment of the game. You judge the player's decision. Then see how the other fans and our hockey expert saw it.":["On te montre un moment clé du match. Tu juges la décision du joueur. Puis tu découvres l'avis des autres fans et de notre expert hockey.",'Wir zeigen dir eine Schlüsselszene des Spiels. Du beurteilst den Entscheid des Spielers. Dann siehst du, wie die anderen Fans und unser Hockey-Experte ihn bewerten.'],
+'31 Dec 2025 · Key decision 1 of 3':['31 déc. 2025 · Décision clé 1 sur 3','31. Dez. 2025 · Schlüsselentscheid 1 von 3'],
+'Watch the play':["Voir l'action",'Szene anschauen'],
+'Real game clip and real Wisehockey tracking data. Fan votes and expert text are samples.':["Vraie séquence du match et vraies données de tracking Wisehockey. Les votes des fans et le texte de l'expert sont des exemples.",'Echte Spielszene und echte Wisehockey-Trackingdaten. Fan-Stimmen und Expertentext sind Beispiele.'],
+'LIVE CLIP':['CLIP DU MATCH','SPIELSZENE'],
+'TRACKING VIEW':['VUE TRACKING','TRACKING-ANSICHT'],
+'DECISION MOMENT':['MOMENT DE LA DÉCISION','MOMENT DES ENTSCHEIDS'],
+'SLOW MOTION':['RALENTI','ZEITLUPE'],
+'Watch #72 Kessler. He has the puck.':['Regarde le n°72 Kessler. Il a le puck.','Achte auf #72 Kessler. Er hat den Puck.'],
+'▶ Play':['▶ Lecture','▶ Abspielen'],
+'Watching…':['Regarde bien…','Schau genau hin…'],
+'Kessler passes to #44 Stransky. How good was this decision?':['Kessler passe au n°44 Stransky. Cette décision était-elle bonne ?','Kessler passt zu #44 Stransky. Wie gut war dieser Entscheid?'],
+'Bad':['Mauvaise','Schlecht'],'Neutral':['Neutre','Neutral'],'Good':['Bonne','Gut'],'Exceptional':['Exceptionnelle','Aussergewöhnlich'],
+'↺ Watch again':['↺ Revoir','↺ Nochmals ansehen'],
+'Slow motion':['Ralenti','Zeitlupe'],
+'How the fans saw it':["L'avis des fans",'So sahen es die Fans'],
+'1,284 fans voted':['1 284 fans ont voté','1284 Fans haben abgestimmt'],
+'Sample':['Exemple','Beispiel'],
+'Kessler had 1.2 seconds':['Kessler avait 1.2 seconde','Kessler hatte 1.2 Sekunden'],
+'From the blue line to the pass':['De la ligne bleue à la passe','Von der blauen Linie bis zum Pass'],
+'You':['Toi','Du'],'you':['toi','du'],
+'What Kessler saw':['Ce que Kessler a vu','Was Kessler sah'],
+'TRACKING DATA':['DONNÉES DE TRACKING','TRACKINGDATEN'],
+'Pressure':['Pression','Druck'],
+'#25 at 1.7 m':['n°25 à 1.7 m','#25 auf 1.7 m'],
+'Speed':['Vitesse','Tempo'],
+"Stransky's space":['Espace de Stransky','Platz für Stransky'],
+'Tap any player to see more.':['Touche un joueur pour en savoir plus.','Tippe auf einen Spieler für mehr Infos.'],
+'What came next':['La suite','Was danach geschah'],
+'REPLAY':['REPLAY','WIEDERHOLUNG'],
+'↺ Replay':['↺ Revoir','↺ Nochmals'],
+'Stransky shoots':['Stransky tire','Stransky schiesst'],
+'0.4 s later':['0.4 s plus tard','0.4 s später'],
+'Shot':['Tir','Schuss'],'Result':['Résultat','Resultat'],
+'wide · xG 9 %':['à côté · xG 9 %','daneben · xG 9 %'],
+'Stransky shoots almost at once, with #22 on him. The shot goes wide.':['Stransky tire presque aussitôt, avec le n°22 sur lui. Le tir passe à côté.','Stransky schiesst fast sofort, mit #22 an ihm dran. Der Schuss geht daneben.'],
+'Back':['Retour','Zurück'],'Next':['Suivant','Weiter'],
+'Back to the game':['Retour au match','Zurück zum Spiel'],
+'The game goes on':['Le match continue','Das Spiel geht weiter'],
+"The expert's verdict comes at the final whistle":["Le verdict de l'expert tombe au coup de sifflet final",'Das Urteil des Experten kommt nach der Schlusssirene'],
+'Stay with the game. Two more key decisions are coming, and your points add up.':["Reste dans le match. Deux autres décisions clés arrivent, et tes points s'additionnent.",'Bleib dran. Zwei weitere Schlüsselentscheide folgen, und deine Punkte zählen zusammen.'],
+'🔒 Key decision 2 · 2nd period':['🔒 Décision clé 2 · 2e tiers','🔒 Schlüsselentscheid 2 · 2. Drittel'],
+'🔒 Key decision 3 · 3rd period':['🔒 Décision clé 3 · 3e tiers','🔒 Schlüsselentscheid 3 · 3. Drittel'],
+'Jump to the final whistle (demo)':['Aller au coup de sifflet final (démo)','Zur Schlusssirene springen (Demo)'],
+'Former coach and TV consultant':['Ancien entraîneur et consultant TV','Ehemaliger Trainer und TV-Experte'],
+'“He pulls the defender towards him, then gives the puck to Stransky, who has more space. Good read. Half a second earlier and Stransky would have had a real shooting lane.”':["« Il attire le défenseur vers lui, puis donne le puck à Stransky, qui a plus d'espace. Bonne lecture. Une demi-seconde plus tôt, et Stransky aurait eu une vraie fenêtre de tir. »",'«Er zieht den Verteidiger auf sich und spielt dann Stransky an, der mehr Platz hat. Gut gelesen. Eine halbe Sekunde früher, und Stransky hätte freie Schussbahn gehabt.»'],
+'Sample text, to be written by Serge':["Texte d'exemple, à rédiger par Serge",'Beispieltext, von Serge zu schreiben'],
+'See my card':['Voir ma carte','Meine Karte ansehen'],
+'I read the play like a':['Je lis le jeu comme un','Ich lese das Spiel wie ein'],
+'points':['points','Punkte'],
+'my decision time':['mon temps de décision','meine Entscheidungszeit'],
+"Kessler's":['celui de Kessler','Kesslers Zeit'],
+'Streak: 1 game in a row':['Série : 1 match de suite','Serie: 1 Spiel in Folge'],
+'Top level reached':['Niveau max atteint','Höchstes Level erreicht'],
+'Next level:':['Niveau suivant :','Nächstes Level:'],
+'Share card':['Partager la carte','Karte teilen'],
+'Play again':['Rejouer','Nochmals spielen'],
+'Now vote for the MVP':['Vote maintenant pour le MVP','Jetzt für den MVP abstimmen'],
+'faster than you. At 27 km/h, with a defender 1.7 m away.':['plus rapide que toi. À 27 km/h, avec un défenseur à 1.7 m.','schneller als du. Mit 27 km/h und einem Verteidiger 1.7 m entfernt.'],
+'As fast as a pro! He had a defender 1.7 m away, though.':["Aussi rapide qu'un pro ! Mais lui avait un défenseur à 1.7 m.",'So schnell wie ein Profi! Aber er hatte einen Verteidiger 1.7 m entfernt.'],
+'Vote':['Vote','Stimme'],
+'Same as the expert':["Comme l'expert",'Wie der Experte'],
+'Quick read (under 5 s)':['Lecture rapide (moins de 5 s)','Schnell gelesen (unter 5 s)'],
+'km/h right now':['km/h à cet instant','km/h in diesem Moment'],
+'from Kessler':['de Kessler','von Kessler'],
+'top km/h this game':['km/h max du match','Top-km/h im Spiel'],
+'ice time':['temps de glace','Eiszeit'],
+'skated':['parcourus','gelaufen'],
+'shots':['tirs','Schüsse'],
+'3.4 m free':['3.4 m libre','3.4 m frei'],
+'In the real app, this card goes straight to Instagram or WhatsApp.':['Dans la vraie app, cette carte part directement sur Instagram ou WhatsApp.','In der echten App geht diese Karte direkt auf Instagram oder WhatsApp.'],
+'This opens the AwArt MVP vote, already live with EHC Basel and Xamax.':["Ceci ouvre le vote MVP d'AwArt, déjà en place à l'EHC Basel et à Xamax.",'Hier öffnet sich das AwArt-MVP-Voting, bereits live beim EHC Basel und bei Xamax.']
+};
+const LANGS=['en','fr','de'];
+const REV={};for(const en in I18N){REV[en]=en;I18N[en].forEach(x=>REV[x]=en);}
+let LANG='en';
+try{const s=localStorage.getItem('rtp-lang');if(LANGS.includes(s))LANG=s;else{const n=(navigator.language||'').slice(0,2);if(LANGS.includes(n))LANG=n;}}catch(e){}
+function T(en){const i=LANGS.indexOf(LANG);return i>0&&I18N[en]?I18N[en][i-1]:en;}
+function trNode(n){const raw=n.nodeValue,t=raw.trim();if(!t)return;const en=REV[t];if(en===undefined)return;const out=T(en);if(out!==t)n.nodeValue=raw.replace(t,out);}
+function applyLang(root){
+  const w=document.createTreeWalker(root||document.body,NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode()))trNode(n);
+  document.querySelectorAll('[data-you]').forEach(e=>e.dataset.you=T('you'));
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('on',b.dataset.l===LANG));
+}
+function setLang(l){LANG=l;try{localStorage.setItem('rtp-lang',l);}catch(e){}applyLang();}
+let trPending=false;
+new MutationObserver(()=>{if(trPending)return;trPending=true;queueMicrotask(()=>{trPending=false;applyLang();});}).observe(document.body,{childList:true,subtree:true,characterData:true});
+
+(function(){
+const SEQ=window.RTP_DATA;
+const LABELS=['Bad','Neutral','Good','Exceptional'];
+const COLORS=['var(--bad)','var(--neutral)','var(--good)','var(--exc)'];
+const CROWD=[14,38,36,12];
+const EXPERT=2, PLAYER_T=1.2, T_SHOT=5.86, T_END=12.6;
+const STEP_NAMES=['Start','Watch and vote','The reveal','Expert verdict','Your card'];
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NS='http://www.w3.org/2000/svg';
+let st={vote:null,t:null,pts:0,freezeAt:0};
+
+// puck: free flight keyframes, plus carry segments where it follows a player
+const PUCK_FREE=SEQ.puckFree;
+const CARRY=SEQ.carry;
+const VB_FULL=[-31,-16,62,32], VB_ZOOM=[-30.5,-13.6,29.5,15.2];
+
+function lerp(a,b,f){return a+(b-a)*f}
+function playerAt(id,t){
+  const S=SEQ.snaps;let prev=null,next=null;
+  for(const s of S){ if(s[1][id]){ if(s[0]<=t)prev=s; else {next=s;break;} } }
+  if(!prev&&!next)return null;
+  if(!prev)return t>=next[0]-0.3?next[1][id]:null;
+  if(!next)return t<=prev[0]+0.6?prev[1][id]:null;
+  if(next[0]-prev[0]>3)return null;
+  const f=(t-prev[0])/(next[0]-prev[0]);
+  return [lerp(prev[1][id][0],next[1][id][0],f),lerp(prev[1][id][1],next[1][id][1],f)];
+}
+function puckAt(t){
+  for(const[c,a,b]of CARRY){ if(t>a&&t<b){const p=playerAt(c,t);if(p)return[p[0]-0.7,p[1]-0.4];} }
+  const K=PUCK_FREE;
+  if(t<=K[0][0])return[K[0][1],K[0][2]];
+  for(let i=1;i<K.length;i++){if(t<=K[i][0]){const f=(t-K[i-1][0])/(K[i][0]-K[i-1][0]);return[lerp(K[i-1][1],K[i][1],f),lerp(K[i-1][2],K[i][2],f)];}}
+  const l=K[K.length-1];return[l[1],l[2]];
+}
+const IDS=[...new Set(SEQ.snaps.flatMap(s=>Object.keys(s[1])))];
+
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function buildRink(svg){
+  svg.innerHTML='';
+  el('rect',{x:-30,y:-15,width:60,height:30,rx:8.5,fill:'var(--ice)',stroke:'#9FB2C3','stroke-width':'.25'},svg);
+  el('line',{x1:0,y1:-15,x2:0,y2:15,stroke:'var(--rink-red)','stroke-width':'.5'},svg);
+  [-7.2,7.2].forEach(x=>el('line',{x1:x,y1:-15,x2:x,y2:15,stroke:'var(--rink-blue)','stroke-width':'.45'},svg));
+  [-26,26].forEach(x=>{el('line',{x1:x,y1:-13.6,x2:x,y2:13.6,stroke:'var(--rink-red)','stroke-width':'.12'},svg);
+    const s=Math.sign(x);el('path',{d:`M${x},-1.8 A1.8,1.8 0 0 ${s<0?1:0} ${x},1.8 Z`,fill:'#BFD9F0',stroke:'var(--rink-red)','stroke-width':'.1'},svg);
+    el('rect',{x:s<0?x-1.1:x,y:-0.9,width:1.1,height:1.8,fill:'none',stroke:'var(--rink-red)','stroke-width':'.18'},svg);});
+  [[-20,-7],[-20,7],[20,-7],[20,7],[0,0]].forEach(([x,y])=>{el('circle',{cx:x,cy:y,r:4.5,fill:'none',stroke:x?'var(--rink-red)':'var(--rink-blue)','stroke-width':'.12'},svg);el('circle',{cx:x,cy:y,r:.3,fill:x?'var(--rink-red)':'var(--rink-blue)'},svg);});
+  [[-5.5,-7],[-5.5,7],[5.5,-7],[5.5,7]].forEach(([x,y])=>el('circle',{cx:x,cy:y,r:.3,fill:'var(--rink-red)'},svg));
+  const ov=el('g',{},svg);const nodes={};
+  IDS.forEach(id=>{const d=id.endsWith('d');const g=el('g',{},svg);
+    el('circle',{r:1.05,fill:d?'var(--davos)':'var(--opp)',stroke:d?'#B08A10':'#0E0E10','stroke-width':'.14'},g);
+    const t=el('text',{'text-anchor':'middle','dominant-baseline':'central','font-size':'.95','font-weight':'700','font-family':'Rubik, Arial, sans-serif',fill:d?'var(--davos-ink)':'var(--opp-ink)'},g);
+    t.textContent=id.slice(0,-1);nodes[id]=g;});
+  nodes.puck=el('circle',{r:.38,fill:'#0E0E10'},svg);
+  return{svg,nodes,ov};
+}
+// data y points "up"; svg y points down
+function draw(r,t,vb){
+  for(const id of IDS){const p=playerAt(id,t),n=r.nodes[id];
+    if(!p){n.setAttribute('visibility','hidden');continue;}
+    n.setAttribute('visibility','visible');n.setAttribute('transform',`translate(${p[0]} ${-p[1]})`);}
+  const[px,py]=puckAt(t);r.nodes.puck.setAttribute('cx',px);r.nodes.puck.setAttribute('cy',-py);
+  if(vb)r.svg.setAttribute('viewBox',vb.map(v=>v.toFixed(2)).join(' '));
+}
+function vbMix(f){f=Math.max(0,Math.min(1,f));f=f*f*(3-2*f);return VB_FULL.map((v,i)=>lerp(v,VB_ZOOM[i],f));}
+function overlay(r,on){
+  r.ov.innerHTML='';if(!on)return;
+  const P=id=>{const p=playerAt(id,T_SHOT);return[p[0],-p[1]];};
+  const K=P('72d'),W=P('25u'),S=P('44d');
+  el('circle',{cx:K[0],cy:K[1],r:2.2,fill:'rgba(255,26,26,.16)',stroke:'var(--accent)','stroke-width':'.22'},r.ov);
+  el('line',{x1:K[0],y1:K[1],x2:W[0],y2:W[1],stroke:'var(--rink-red)','stroke-width':'.2','stroke-dasharray':'.4 .3'},r.ov);
+  el('line',{x1:K[0],y1:K[1],x2:S[0],y2:S[1],stroke:'#16775A','stroke-width':'.22','stroke-dasharray':'.5 .35'},r.ov);
+  el('circle',{cx:S[0],cy:S[1],r:3.4,fill:'rgba(92,201,167,.12)',stroke:'#1E8C6A','stroke-width':'.14','stroke-dasharray':'.4 .3'},r.ov);
+  const lbl=(x,y,txt,c)=>{const t=el('text',{x,y,'font-size':'1.15','font-weight':'700','font-family':'Rubik, Arial, sans-serif',fill:c,'text-anchor':'middle'},r.ov);t.textContent=txt;};
+  lbl(K[0]-1.2,K[1]-2.8,'#72 Kessler','#C70000');
+  lbl(W[0]-1.4,W[1]+2.2,'1.7 m','#B23A31');
+  lbl(S[0]+0.5,S[1]+4.6,'3.4 m free','#16775A');
+}
+let anim=0;
+function play(r,from,to,vbf,done){
+  const my=++anim;
+  if(reduce){draw(r,to,vbf(to));done&&done();return;}
+  let start=null;
+  function f(ts){if(my!==anim)return;if(start===null)start=ts;const t=Math.min(to,from+(ts-start)/1000);draw(r,t,vbf(t));
+    if(t<to)requestAnimationFrame(f);else done&&done();}
+  requestAnimationFrame(f);
+}
+
+const $=id=>document.getElementById(id);
+function show(n){
+  for(let i=0;i<=5;i++)$('s'+i).hidden=i!==n;
+  $('s'+n).classList.remove('fade');void $('s'+n).offsetWidth;$('s'+n).classList.add('fade');
+  const step=[0,1,2,2,3,4][n];
+  document.querySelectorAll('.steps span').forEach((s,i)=>s.classList.toggle('on',i<=step));
+  $('stepLabel').textContent=STEP_NAMES[step];window.scrollTo(0,0);
+}
+function setPts(p){st.pts=p;$('ptsVal').textContent=p;}
+function toast(msg){const t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2600);}
+
+const PINFO=SEQ.players;
+document.querySelectorAll('.lang button').forEach(x=>x.onclick=()=>setLang(x.dataset.l));
+const r1=buildRink($('rink')), r2=buildRink($('rink2'));
+const V_START=1.9, V_PAUSE=3.3, V_OFF=2.4, SLOW_FROM=2.6, SLOW_TO=4.6;
+// Kessler's position in the video frame (960x492), checked by eye on the clip
+const MK=[[1.9,602,228],[2.0,600,225],[3.0,555,195],[3.4,548,180]];
+function markAt(t){if(t<MK[0][0]-0.01||t>MK[MK.length-1][0])return null;
+  for(let i=1;i<MK.length;i++)if(t<=MK[i][0]){const a=MK[i-1],c=MK[i],f=Math.max(0,(t-a[0])/(c[0]-a[0]));return[lerp(a[1],c[1],f),lerp(a[2],c[2],f)];}}
+const vid=$('vid');
+// The game clip is not in the public repo: without private/clip.mp4 the app uses the 2D tracking replay.
+vid.addEventListener('error',()=>{window.NO_VIDEO=true;});
+$('vid2').addEventListener('error',()=>{$('vid2').parentElement.hidden=true;});
+function markLoop(){const m=$('mark'),p=markAt(vid.currentTime);
+  if(st.phase==='zoom'){const o=zoomOrigin(vid.currentTime),s=$('stage');s.style.transformOrigin=(o[0]/960*100)+'% '+(o[1]/492*100)+'%';s.style.transform='scale('+ZOOM_SCALE+')';}
+  if(p&&!$('vidWrap').hidden&&!$('s1').hidden){m.hidden=false;m.style.left=(p[0]/960*100)+'%';m.style.top=(p[1]/492*100)+'%';}else m.hidden=true;
+  requestAnimationFrame(markLoop);}
+requestAnimationFrame(markLoop);
+function phase(p){st.phase=p;$('setupBox').hidden=p!=='setup';$('playBox').hidden=p!=='play';$('zoomBox').hidden=p!=='zoom';$('voteBox').hidden=p!=='vote';}
+function seek(v,t){try{v.currentTime=t;}catch(e){}}
+function askQuestion(){
+  setZoom(false);vid.pause();vid.playbackRate=1;seek(vid,V_PAUSE);$('vidTag').textContent='DECISION MOMENT';
+  if(st.use2D){draw(r1,T_SHOT,VB_ZOOM);focusRing(r1);}
+  phase('vote');st.freezeAt=performance.now();
+}
+// zoomed slow-motion replay for newcomers: the view follows Kessler, then the puck towards the net
+const ZOOM_FROM=1.9, ZOOM_TO=4.9, ZOOM_SCALE=2.1;
+const ZO=[[1.9,602,228],[3.0,555,195],[3.4,548,180],[3.9,520,200],[4.4,420,235],[4.9,330,250]];
+function zoomOrigin(t){if(t<=ZO[0][0])return ZO[0].slice(1);for(let i=1;i<ZO.length;i++)if(t<=ZO[i][0]){const a=ZO[i-1],c=ZO[i],f=(t-a[0])/(c[0]-a[0]);return[lerp(a[1],c[1],f),lerp(a[2],c[2],f)];}return ZO[ZO.length-1].slice(1);}
+function setZoom(on){const s=$('stage');s.classList.toggle('zoomed',on);if(!on){s.style.transform='';}}
+function zoomReplay(){
+  if(st.use2D){askQuestion();return;}
+  phase('zoom');st.mode='zoom';$('vidTag').textContent='SLOW MOTION · ZOOM';
+  seek(vid,ZOOM_FROM);vid.playbackRate=0.4;setZoom(true);
+  const p=vid.play();if(p&&p.catch)p.catch(()=>askQuestion());
+}
+$('skipZoom').onclick=()=>askQuestion();
+function playClip(slow){
+  if(slow){zoomReplay();return;}
+  phase('play');st.mode=slow?'slow':'full';
+  if(st.use2D){play(r1,slow?4.5:0,T_END,t=>vbMix((t-3.6)/1.6),askQuestion);return;}
+  $('vidTag').textContent=slow?'SLOW MOTION':'LIVE CLIP';
+  vid.playbackRate=slow?0.35:1;seek(vid,slow?SLOW_FROM:V_START);
+  const p=vid.play();if(p&&p.catch)p.catch(()=>{st.use2D=true;$('vidWrap').hidden=true;$('rinkWrap').hidden=false;playClip(slow);});
+}
+vid.addEventListener('timeupdate',()=>{if(st.phase==='zoom'&&vid.currentTime>=ZOOM_TO)askQuestion();});
+vid.addEventListener('ended',()=>{if(st.phase==='play'){if(!st.zoomDone){st.zoomDone=true;zoomReplay();}else askQuestion();}});
+function focusRing(r){r.ov.innerHTML='';const p=playerAt('72d',T_SHOT);
+  el('circle',{cx:p[0],cy:-p[1],r:2.2,fill:'rgba(255,26,26,.16)',stroke:'var(--accent)','stroke-width':'.22'},r.ov);}
+function startWatch(){
+  st={vote:null,t:null,pts:0,freezeAt:0,phase:'setup',use2D:false,story:0,zoomDone:false};setPts(0);
+  show(1);$('vidWrap').hidden=false;$('rinkWrap').hidden=true;$('vidTag').textContent='LIVE CLIP';
+  setZoom(false);vid.pause();vid.playbackRate=1;seek(vid,2.0);phase('setup');
+  if(window.NO_VIDEO||vid.error){st.use2D=true;$('vidWrap').hidden=true;$('rinkWrap').hidden=false;overlay(r1,false);focusRing(r1);draw(r1,0,VB_FULL);}
+}
+$('startBtn').onclick=startWatch;$('replayBtn').onclick=startWatch;
+$('playBtn').onclick=()=>playClip(false);
+$('againBtn').onclick=()=>playClip(false);
+$('slowBtn').onclick=()=>playClip(true);
+
+// stories after the vote
+function showStory(i){
+  st.story=i;document.querySelectorAll('#s2 .story').forEach(s=>s.hidden=+s.dataset.i!==i);
+  document.querySelectorAll('.sbars span').forEach((s,k)=>s.classList.toggle('on',k<=i));
+  $('prevStory').style.visibility=i?'visible':'hidden';
+  $('nextStory').textContent=i===3?'Back to the game':'Next';
+  const box=$('crowdBars');
+  if(i===0)requestAnimationFrame(()=>requestAnimationFrame(()=>box.querySelectorAll('.fill').forEach((f,k)=>f.style.width=CROWD[k]+'%')));
+  if(i===1)requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const maxW=Math.max(40,$('tbY').parentElement.clientWidth-56-20-80);const sc=maxW/Math.max(st.t,PLAYER_T);
+    $('tbP').style.width=Math.max(3,Math.round(PLAYER_T*sc))+'px';$('tbY').style.width=Math.round(st.t*sc)+'px';}));
+  if(i===2){draw(r2,T_SHOT,VB_ZOOM);overlay(r2,true);selectPlayer('72d');}
+  const v2=$('vid2');if(i===3){seek(v2,V_PAUSE);const p=v2.play();if(p&&p.catch)p.catch(()=>{});}else v2.pause();
+}
+$('nextStory').onclick=()=>{if(st.story<3)showStory(st.story+1);else show(3);};
+$('prevStory').onclick=()=>{if(st.story>0)showStory(st.story-1);};
+$('again2').onclick=()=>{const v=$('vid2');seek(v,V_PAUSE);const p=v.play();if(p&&p.catch)p.catch(()=>{});};
+
+function fmtTime(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function selectPlayer(id){
+  const i=PINFO[id];if(!i)return;
+  r2.ov.querySelectorAll('.sel').forEach(n=>n.remove());
+  const p=playerAt(id,T_SHOT),k=playerAt('72d',T_SHOT);
+  if(id!=='72d')el('circle',{class:'sel',cx:p[0],cy:-p[1],r:1.7,fill:'none',stroke:'#1A253E','stroke-width':'.2'},r2.ov);
+  const dist=Math.hypot(p[0]-k[0],p[1]-k[1]);
+  const g=i.g||{};
+  $('pcard').innerHTML=`<div class="pc-top"><span class="dot" style="background:${id.endsWith('d')?'var(--davos)':'var(--opp)'};border:1px solid var(--muted)"></span><b>#${id.slice(0,-1)} ${i.name}</b><span class="muted">${i.team}</span></div>
+  <div class="stats">
+    <div><b>${i.kmh??'–'}</b><span>km/h right now</span></div>
+    <div><b>${id==='72d'?'–':dist.toFixed(1)+' m'}</b><span>from Kessler</span></div>
+    <div><b>${g.top??'–'}</b><span>top km/h this game</span></div>
+    <div><b>${g.toi?fmtTime(g.toi):'–'}</b><span>ice time</span></div>
+    <div><b>${g.dist?(g.dist/1000).toFixed(1)+' km':'–'}</b><span>skated</span></div>
+    <div><b>${g.shots??'–'}</b><span>shots</span></div>
+  </div>`;
+}
+Object.keys(r2.nodes).forEach(id=>{if(id==='puck')return;const n=r2.nodes[id];n.style.cursor='pointer';n.addEventListener('click',()=>selectPlayer(id));});
+
+document.querySelectorAll('.vote').forEach(b=>b.onclick=()=>{
+  st.vote=+b.dataset.v;st.t=Math.max(0.1,(performance.now()-st.freezeAt)/1000);setPts(10);vid.pause();
+  const box=$('crowdBars');box.innerHTML='';
+  CROWD.forEach((v,i)=>{const d=document.createElement('div');d.className='bar'+(i===st.vote?' you':'');
+    d.innerHTML=`<span class="lab" data-you="${T('you')}">${LABELS[i]}</span><div class="track"><div class="fill" style="width:0;background:${COLORS[i]}"></div></div><span class="v">${v}%</span>`;box.appendChild(d);});
+  $('tbP').style.width='0px';$('tbY').style.width='0px';$('tvY').textContent=st.t.toFixed(1)+' s';
+  const ratio=st.t/PLAYER_T;
+  if(ratio>=1.15){$('ratio').textContent=(ratio>=10?Math.round(ratio):ratio.toFixed(1).replace(/\.0$/,''))+'×';$('ratioTxt').textContent='faster than you. At 27 km/h, with a defender 1.7 m away.';}
+  else{$('ratio').textContent='⚡';$('ratioTxt').textContent='As fast as a pro! He had a defender 1.7 m away, though.';}
+  show(2);showStory(0);
+});
+$('toVerdict').onclick=()=>{
+  const match=st.vote===EXPERT, quick=match&&st.t<5;
+  const rows=[['Vote',10],['Same as the expert',match?20:0],['Quick read (under 5 s)',quick?10:0]];
+  const total=rows.reduce((a,r)=>a+r[1],0);
+  $('ledger').innerHTML=rows.map(r=>`<div><span${r[1]?'':' class="muted"'}>${r[0]}</span><span>+${r[1]}</span></div>`).join('')+`<div class="tot"><span>Total</span><span>${total} pts</span></div>`;
+  setPts(total);show(4);
+};
+$('toCard').onclick=()=>{
+  const lvl=st.pts>=40?'Coach':st.pts>=30?'Scout':'Rookie';
+  $('lvl').innerHTML=`I read the play like a <em>${lvl}</em>`;
+  $('cNext').innerHTML='<span>Streak: 1 game in a row</span> · '+(lvl==='Coach'?'<span>Top level reached</span>':'<span>Next level:</span> <span>'+(lvl==='Rookie'?'Scout':'Coach')+'</span>');
+  $('cPts').textContent=st.pts;$('cTime').textContent=st.t.toFixed(1)+' s';show(5);
+};
+$('shareBtn').onclick=()=>toast('In the real app, this card goes straight to Instagram or WhatsApp.');
+$('mvpBtn').onclick=()=>toast('This opens the AwArt MVP vote, already live with EHC Basel and Xamax.');
+show(0);applyLang();
+})();
+</script>
+
+</body></html>
