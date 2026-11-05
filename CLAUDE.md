@@ -5,17 +5,17 @@ Owner: Michael Rohrer (non-technical, writes in French; answer him in French, ke
 
 ## Hard rules
 
-- The challenge data (Wisehockey CSV/XLSX, game videos) is **confidential**. Never commit it, never paste it into issues, PRs or public files. Only `data/sample-sequence.js` (invented) is public.
-- Real data lives in `private/` (git-ignored): `private/sequence.js`, `private/clip.mp4`.
+- The repo is public on purpose: the prototype is tested by mentors and fans. The extracted play (`data/sequence.js`) and its short clip (`assets/clip.mp4`) are published by the owner's decision.
+- Do not commit the full raw challenge files (complete CSV/XLSX exports, full game videos): too heavy. Keep them in `private/` (git-ignored) and extract only the plays the app needs.
 - Never write passwords, tokens or download links of the challenge data into the repo.
 - Keep it a static site: no build step, no backend, until the team reaches the final.
 
 ## Structure
 
-- `index.html` — the whole app (HTML + CSS + JS, single file). Loads `data/sample-sequence.js`, then `private/sequence.js` if present (overrides `window.RTP_DATA`).
+- `index.html` — the whole app (HTML + CSS + JS, single file). Loads `data/sequence.js` (`window.RTP_DATA`) and `assets/clip.mp4`.
 - `assets/awart-logo.png` — AwArt round badge.
-- `data/sample-sequence.js` — invented sequence: `snaps` (time → player positions in metres), `puckFree` (puck keyframes when free), `carry` ([playerId, from, to]), `players` (name, team, stats).
-- `scripts/extract_sequence.py` — builds `private/sequence.js` from a Wisehockey events CSV (`--period --from --to`, MatchClock seconds). `puckFree`/`carry` are filled by hand from the printed PuckControl events.
+- `data/sequence.js` — the real play (USA vs HCD, #72 Kessler): `snaps` (time → player positions in metres), `puckFree` (puck keyframes when free), `carry` ([playerId, from, to]), `players` (name, team, stats).
+- `scripts/extract_sequence.py` — builds `data/sequence.js` from a Wisehockey events CSV (`--period --from --to`, MatchClock seconds). `puckFree`/`carry` are filled by hand from the printed PuckControl events.
 
 ## Key conventions in index.html
 

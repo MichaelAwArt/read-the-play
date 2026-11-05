@@ -1,6 +1,6 @@
 """Build a Read the Play sequence file from a Wisehockey match-events CSV.
 
-Runs locally on the confidential challenge files and writes private/sequence.js,
+Runs on the Wisehockey challenge files and writes data/sequence.js,
 which is ignored by git. Usage:
 
     python scripts/extract_sequence.py EVENTS.csv --period 1 --from 298 --to 311
@@ -22,7 +22,7 @@ def main():
     p.add_argument('--period', type=int, required=True)
     p.add_argument('--from', dest='start', type=int, required=True)
     p.add_argument('--to', dest='end', type=int, required=True)
-    p.add_argument('--out', default='private/sequence.js')
+    p.add_argument('--out', default='data/sequence.js')
     a = p.parse_args()
 
     d = pd.read_csv(a.csv, encoding='utf-8-sig', low_memory=False)

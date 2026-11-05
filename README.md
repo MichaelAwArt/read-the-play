@@ -27,13 +27,13 @@ The prototype uses Wisehockey tracking and event data:
 - **The 2D replay:** positions of the 12 players over time, interpolated between events.
 - **The outcome:** shot speed and expected goals (xG) from the event data.
 
-## Data and confidentiality
+## Data
 
-The challenge data is confidential and is **not** in this repository.
+- `data/sequence.js`: the play shown in the prototype (USA vs HC Davos, #72 Kessler), extracted from the Wisehockey tracking data of the SIC Data-hack 2026: player positions, puck path and player stats.
+- `assets/clip.mp4`: the matching game clip. If it cannot play, the app falls back to the 2D tracking replay.
+- `scripts/extract_sequence.py` builds a new `data/sequence.js` from a Wisehockey events CSV, to add more plays.
 
-- `data/sample-sequence.js` contains **invented sample data** with the same structure, so the prototype runs out of the box.
-- To use real data, run `scripts/extract_sequence.py` on the challenge files. It writes `private/sequence.js`, which overrides the sample data and is ignored by git.
-- The game clip is loaded from `private/clip.mp4` (not committed). Without it, the app falls back to the 2D tracking replay.
+Data: Wisehockey, provided by ThinkSport for the SIC Data-hack 2026.
 
 ## Run it
 

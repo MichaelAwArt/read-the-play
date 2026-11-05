@@ -184,7 +184,7 @@ h1 em,.wordmark{color:#FFFFFF}
   <section class="screen" id="s1" hidden>
     <div class="rinkwrap" id="vidWrap">
       <div class="stage" id="stage">
-        <video class="vid" id="vid" muted playsinline preload="auto" src="private/clip.mp4"></video>
+        <video class="vid" id="vid" muted playsinline preload="auto" src="assets/clip.mp4"></video>
         <div class="mark" id="mark" hidden><span>#72 Kessler</span></div>
       </div>
       <span class="live" id="vidTag">LIVE CLIP</span>
@@ -251,7 +251,7 @@ h1 em,.wordmark{color:#FFFFFF}
     <div class="story" data-i="3" hidden>
       <h2>What came next</h2>
       <div class="rinkwrap">
-        <video class="vid" id="vid2" muted playsinline preload="auto" src="private/clip.mp4"></video>
+        <video class="vid" id="vid2" muted playsinline preload="auto" src="assets/clip.mp4"></video>
         <span class="live">REPLAY</span>
         <button class="again" id="again2">↺ Replay</button>
       </div>
@@ -319,9 +319,8 @@ h1 em,.wordmark{color:#FFFFFF}
 </div>
 <div class="toast" id="toast" hidden></div>
 
-<!-- Sample data (public). A local private/sequence.js, never committed, overrides it with real data. -->
-<script src="data/sample-sequence.js"></script>
-<script src="private/sequence.js"></script>
+<!-- Sequence data: player positions, puck and player stats. -->
+<script src="data/sequence.js"></script>
 <script>
 const I18N={
 'Again, slower and closer':['Encore une fois, au ralenti et de plus près','Nochmals, langsamer und näher'],
@@ -530,7 +529,7 @@ const MK=[[1.9,602,228],[2.0,600,225],[3.0,555,195],[3.4,548,180]];
 function markAt(t){if(t<MK[0][0]-0.01||t>MK[MK.length-1][0])return null;
   for(let i=1;i<MK.length;i++)if(t<=MK[i][0]){const a=MK[i-1],c=MK[i],f=Math.max(0,(t-a[0])/(c[0]-a[0]));return[lerp(a[1],c[1],f),lerp(a[2],c[2],f)];}}
 const vid=$('vid');
-// The game clip is not in the public repo: without private/clip.mp4 the app uses the 2D tracking replay.
+// If the game clip cannot play, the app uses the 2D tracking replay.
 vid.addEventListener('error',()=>{window.NO_VIDEO=true;});
 $('vid2').addEventListener('error',()=>{$('vid2').parentElement.hidden=true;});
 function markLoop(){const m=$('mark'),p=markAt(vid.currentTime);
