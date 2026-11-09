@@ -154,6 +154,34 @@ body{background:radial-gradient(ellipse 90% 45% at 85% -5%,rgba(0,204,217,.28),t
 .share{background:linear-gradient(160deg,#123E73 0%,#0A2448 70%);border-color:rgba(79,211,224,.3)}
 .locked div{border-color:rgba(79,211,224,.3)}
 h1 em,.wordmark{color:#FFFFFF}
+.vid.wide{aspect-ratio:16/9}
+.steplabel{margin-top:0;display:flex;gap:8px;align-items:center}
+.stepdec{background:rgba(0,204,217,.14);border:1px solid rgba(79,211,224,.35);color:var(--text);border-radius:999px;padding:2px 10px;letter-spacing:.5px;text-transform:none;font-weight:600}
+.recap{gap:10px}
+.recap .rinkwrap{border-radius:10px}
+.recap .vid{border-radius:10px}
+.recap .mark span{font-size:11px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cmp div{background:rgba(6,22,49,.55);border:1px solid rgba(79,211,224,.18);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.cmp span{font-size:12px;color:var(--muted)}
+.cmp b{font-weight:600}
+.ledger .grp{color:var(--data);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:600;margin-top:4px}
+.ledger .grp:first-child{margin-top:0}
+.hideTag{position:absolute;left:50%;bottom:10%;transform:translateX(-50%);background:rgba(10,38,80,.85);color:#fff;font-size:12px;font-weight:600;padding:4px 10px;border-radius:6px;white-space:nowrap}
+.unlock{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--data);border-radius:10px;background:rgba(0,204,217,.10);color:var(--text);font-weight:600;font-size:15px;text-align:left;width:100%}
+.unlock .go{margin-left:auto;color:var(--data)}
+.done{color:var(--good)!important;border-style:solid!important}
+.result{display:flex;align-items:center;gap:12px}
+.result .ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:22px;font-weight:700;flex:none}
+.result.ok .ic{background:var(--good);color:#06301F}
+.result.ko .ic{background:#7F93B0;color:#0A1E3F}
+.rtable{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.rtable th{font-weight:600;color:var(--muted);text-align:right;padding:4px 2px;font-size:12px}
+.rtable th:first-child,.rtable td:first-child{text-align:left}
+.rtable td{text-align:right;padding:6px 2px;border-top:1px solid rgba(79,211,224,.18)}
+.rtable tr.win td{color:var(--davos);font-weight:600}
+.rule{font-size:14px;line-height:1.5}
+
 </style>
 
 <div class="app">
@@ -161,8 +189,7 @@ h1 em,.wordmark{color:#FFFFFF}
     <div class="score"><span class="dot" style="background:var(--davos)"></span>USA 0–0 HCD<span class="clock">P1 · 14:59</span></div>
     <div class="topr"><div class="lang" role="group" aria-label="Language"><button data-l="en">EN</button><button data-l="fr">FR</button><button data-l="de">DE</button></div><div class="pts"><b id="ptsVal">0</b> pts</div></div>
   </div>
-  <div class="steps" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-  <p class="steplabel" id="stepLabel">Start</p>
+  <p class="steplabel"><span id="stepDec" class="stepdec" hidden>Decision 1 / 3</span><span id="stepLabel">Start</span></p>
 
   <section class="screen fade" id="s0">
     <div class="brandrow"><img src="assets/awart-logo.png" alt="AwArt" class="logo"><div><p class="wordmark">Read the Play</p><p class="byline">by AwArt · Spengler Cup</p></div></div>
@@ -274,7 +301,7 @@ h1 em,.wordmark{color:#FFFFFF}
     <h2>The expert's verdict comes at the final whistle</h2>
     <p class="muted">Stay with the game. Two more key decisions are coming, and your points add up.</p>
     <div class="locked">
-      <div>🔒 Key decision 2 · 2nd period</div>
+      <button class="unlock" id="refGo"><span>⚖️</span><span id="refGoTxt">Key decision 2 · Be the referee</span><span class="go">▶</span></button>
       <div>🔒 Key decision 3 · 3rd period</div>
     </div>
     <div class="spacer"></div>
@@ -282,6 +309,20 @@ h1 em,.wordmark{color:#FFFFFF}
   </section>
 
   <section class="screen" id="s4" hidden>
+    <div class="card recap">
+      <p class="eyebrow" style="color:var(--data)">Decision 1 · Kessler's pass · P1 14:59</p>
+      <div class="rinkwrap">
+        <div class="stage">
+          <video class="vid" id="vid3" muted playsinline preload="none" poster="assets/kessler-moment.jpg" src="assets/clip.mp4"></video>
+          <div class="mark" id="mark3" style="left:57.3%;top:37.3%"><span>#72 Kessler</span></div>
+        </div>
+        <button class="again" id="again3">▶ Watch again</button>
+      </div>
+      <div class="cmp">
+        <div><span>You</span><b id="recapYou">–</b></div>
+        <div><span>Serge Pelletier</span><b id="recapExp">Good</b></div>
+      </div>
+    </div>
     <div class="card">
       <div class="verdict">
         <div class="avatar">SP</div>
@@ -315,6 +356,64 @@ h1 em,.wordmark{color:#FFFFFF}
     </div>
     <div class="spacer"></div>
     <button class="btn" id="mvpBtn">Now vote for the MVP</button>
+  </section>
+  <section class="screen" id="s6" hidden>
+    <div class="rinkwrap" id="refVidWrap">
+      <video class="vid wide" id="rvid" muted playsinline preload="auto" src="assets/icing-q.mp4"></video>
+      <span class="live" id="rvidTag">LIVE CLIP</span>
+      <span class="hideTag" id="hideTag" hidden>🙈 Linesman hidden</span>
+    </div>
+    <div id="refSetup" class="screen fade" style="flex:0">
+      <h2>#96 Egli shoots the puck from his own half. Watch the race.</h2>
+      <p class="muted">Then tell us what the linesman decided.</p>
+      <button class="btn" id="refPlay">▶ Play</button>
+    </div>
+    <div id="refWatching" hidden><p class="muted">Watching…</p></div>
+    <div id="refAsk" hidden class="screen fade" style="flex:0">
+      <h2>What did the linesman call?</h2>
+      <div class="votes" id="refOpts">
+        <button class="vote" data-r="icing">Icing</button>
+        <button class="vote" data-r="noicing">No icing, play on</button>
+        <button class="vote" data-r="offside">Offside</button>
+        <button class="vote" data-r="unsure">Not sure</button>
+      </div>
+      <button class="btn ghost small" id="refAgain">↺ Watch again</button>
+    </div>
+    <div id="refReveal" hidden class="screen fade" style="flex:0">
+      <div class="card">
+        <div class="result" id="refResult"><span class="ic" id="refIc">✓</span><div><p style="font-weight:600" id="refRes1">Right call!</p><p class="muted" style="font-size:14px">No icing: Davos won the race for the puck.</p></div></div>
+      </div>
+      <h2>The data proves it</h2>
+      <div class="rinkwrap">
+        <svg class="rink" id="rink3" viewBox="-31 -16 48 32" role="img" aria-label="Tracking view of the race for the puck"></svg>
+        <span class="live">TRACKING DATA</span>
+        <button class="again" id="raceAgain">↺ Replay</button>
+      </div>
+      <div class="card">
+        <p class="muted" style="font-size:14px">#36 Knak started <b style="color:var(--text)">5.3 m</b> behind. He skated faster and got there first.</p>
+        <table class="rtable">
+          <tr><th></th><th>Skated</th><th>Average</th><th>Last stretch</th></tr>
+          <tr class="win"><td>#36 Knak · HCD</td><td>38.7 m</td><td>27 km/h</td><td>30 km/h</td></tr>
+          <tr><td>#23 Pohlkamp · USA</td><td>33.0 m</td><td>23 km/h</td><td>27 km/h</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <p class="eyebrow" style="color:var(--data)">The rule</p>
+        <p class="rule">The puck was shot from behind the red line, so icing is possible: the linesman raises his arm. But if an attacking player wins the race for the puck, the icing is waved off and play goes on.</p>
+        <div class="verdict">
+          <div class="avatar">OM</div>
+          <div style="min-width:0;flex:1"><p style="font-weight:600">Officiating manager</p><p class="muted" style="font-size:13px">Explanation coming soon</p></div>
+        </div>
+        <span class="tag" style="align-self:flex-start">Text to be validated by the officiating manager</span>
+      </div>
+      <div class="rinkwrap">
+        <video class="vid wide" id="rvid2" muted playsinline preload="auto" src="assets/icing.mp4"></video>
+        <span class="live">THE LINESMAN'S SIGNAL</span>
+        <button class="again" id="rvid2Again">↺ Replay</button>
+      </div>
+      <p class="muted" style="font-size:14px">Arm up: icing possible. Then both arms out: no icing, play on.</p>
+      <button class="btn" id="refBack">Back to the game</button>
+    </div>
   </section>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -369,7 +468,40 @@ const I18N={
 'Shot':['Tir','Schuss'],'Result':['Résultat','Resultat'],
 'wide · xG 9 %':['à côté · xG 9 %','daneben · xG 9 %'],
 'Stransky shoots almost at once, with #22 on him. The shot goes wide.':['Stransky tire presque aussitôt, avec le n°22 sur lui. Le tir passe à côté.','Stransky schiesst fast sofort, mit #22 an ihm dran. Der Schuss geht daneben.'],
-'Back':['Retour','Zurück'],'Next':['Suivant','Weiter'],
+'Back':['Retour','Zurück'],
+'Decision 1 / 3':['Décision 1 / 3','Entscheid 1 / 3'],'Decision 2 / 3':['Décision 2 / 3','Entscheid 2 / 3'],
+'Referee call':["Décision d'arbitre",'Schiri-Entscheid'],
+"Decision 1 · Kessler's pass · P1 14:59":['Décision 1 · La passe de Kessler · P1 14:59','Entscheid 1 · Kesslers Pass · P1 14:59'],
+"Decision 1 · Kessler's pass":['Décision 1 · La passe de Kessler','Entscheid 1 · Kesslers Pass'],
+'Decision 2 · Referee call':["Décision 2 · Décision d'arbitre",'Entscheid 2 · Schiri-Entscheid'],
+'▶ Watch again':['▶ Revoir','▶ Nochmals ansehen'],
+'Right call':['Bonne décision','Richtig entschieden'],
+'Key decision 2 · Be the referee':["Décision clé 2 · Sois l'arbitre",'Schlüsselentscheid 2 · Sei der Schiri'],
+'Key decision 2 · Referee call':["Décision clé 2 · Décision d'arbitre",'Schlüsselentscheid 2 · Schiri-Entscheid'],
+'#96 Egli shoots the puck from his own half. Watch the race.':['Le n°96 Egli dégage le puck depuis sa moitié. Regarde la course.','#96 Egli schiesst den Puck aus der eigenen Hälfte. Achte auf das Rennen.'],
+'Then tell us what the linesman decided.':['Puis dis-nous ce que le juge de ligne a décidé.','Dann sag uns, was der Linienrichter entschieden hat.'],
+'🙈 Linesman hidden':['🙈 Juge de ligne masqué','🙈 Linienrichter verdeckt'],
+'What did the linesman call?':['Qu’a décidé le juge de ligne ?','Was hat der Linienrichter entschieden?'],
+'Icing':['Icing','Icing'],
+'No icing, play on':['Pas d’icing, le jeu continue','Kein Icing, weiterspielen'],
+'Offside':['Hors-jeu','Offside'],
+'Not sure':['Pas sûr','Nicht sicher'],
+'Right call! +20 pts':['Bien vu ! +20 pts','Richtig! +20 Pkt.'],
+'Tricky one!':['Pas facile, celle-là !','Knifflig!'],
+'Not this time':['Pas cette fois','Diesmal nicht'],
+'No icing: Davos won the race for the puck.':['Pas d’icing : Davos a gagné la course au puck.','Kein Icing: Davos hat das Rennen um den Puck gewonnen.'],
+'The data proves it':['Les données le prouvent','Die Daten beweisen es'],
+'#36 Knak started':['Le n°36 Knak partait avec','#36 Knak startete'],
+'behind. He skated faster and got there first.':['de retard. Il a patiné plus vite et il est arrivé le premier.','Rückstand. Er lief schneller und war zuerst dort.'],
+'Skated':['Distance','Strecke'],'Average':['Moyenne','Schnitt'],'Last stretch':['Fin de course','Schlussspurt'],
+'The rule':['La règle','Die Regel'],
+'The puck was shot from behind the red line, so icing is possible: the linesman raises his arm. But if an attacking player wins the race for the puck, the icing is waved off and play goes on.':['Le puck a été dégagé depuis derrière la ligne rouge : l’icing est possible, le juge de ligne lève le bras. Mais si un attaquant gagne la course au puck, l’icing est annulé et le jeu continue.','Der Puck wurde hinter der roten Linie gespielt, also ist Icing möglich: Der Linienrichter hebt den Arm. Gewinnt aber ein Angreifer das Rennen um den Puck, wird das Icing aufgehoben und es wird weitergespielt.'],
+'Officiating manager':['Responsable des arbitres','Schiedsrichter-Chef'],
+'Explanation coming soon':['Explication à venir','Erklärung folgt'],
+'Text to be validated by the officiating manager':['Texte à valider par le responsable des arbitres','Text vom Schiedsrichter-Chef zu bestätigen'],
+"THE LINESMAN'S SIGNAL":['LE SIGNE DU JUGE DE LIGNE','DAS ZEICHEN DES LINIENRICHTERS'],
+'Arm up: icing possible. Then both arms out: no icing, play on.':['Bras levé : icing possible. Puis bras écartés : pas d’icing, le jeu continue.','Arm hoch: Icing möglich. Dann beide Arme seitlich: kein Icing, weiterspielen.'],
+'Referee call: right':["Décision d'arbitre : juste",'Schiri-Entscheid: richtig'],'Next':['Suivant','Weiter'],
 'Back to the game':['Retour au match','Zurück zum Spiel'],
 'The game goes on':['Le match continue','Das Spiel geht weiter'],
 "The expert's verdict comes at the final whistle":["Le verdict de l'expert tombe au coup de sifflet final",'Das Urteil des Experten kommt nach der Schlusssirene'],
@@ -511,11 +643,15 @@ function play(r,from,to,vbf,done){
 
 const $=id=>document.getElementById(id);
 function show(n){
-  for(let i=0;i<=5;i++)$('s'+i).hidden=i!==n;
+  for(let i=0;i<=6;i++)$('s'+i).hidden=i!==n;
+  const clk=document.querySelector('.score .clock');if(clk)clk.textContent=n===6?'P1 · 18:00':'P1 · 14:59';
   $('s'+n).classList.remove('fade');void $('s'+n).offsetWidth;$('s'+n).classList.add('fade');
-  const step=[0,1,2,2,3,4][n];
+  const step=[0,1,2,2,3,4,1][n];
+  const DEC=['', 'Decision 1 / 3','Decision 1 / 3','','','', 'Decision 2 / 3'][n];
+  const NAME=['Start','Watch and vote','The reveal','The game goes on','Expert verdict','Your card','Referee call'][n];
+  $('stepDec').hidden=!DEC;if(DEC)$('stepDec').textContent=DEC;
   document.querySelectorAll('.steps span').forEach((s,i)=>s.classList.toggle('on',i<=step));
-  $('stepLabel').textContent=STEP_NAMES[step];window.scrollTo(0,0);
+  $('stepLabel').textContent=NAME;window.scrollTo(0,0);
 }
 function setPts(p){st.pts=p;$('ptsVal').textContent=p;}
 function toast(msg){const t=$('toast');t.textContent=msg;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2600);}
@@ -523,9 +659,10 @@ function toast(msg){const t=$('toast');t.textContent=msg;t.hidden=false;clearTim
 const PINFO=SEQ.players;
 document.querySelectorAll('.lang button').forEach(x=>x.onclick=()=>setLang(x.dataset.l));
 const r1=buildRink($('rink')), r2=buildRink($('rink2'));
-const V_START=1.9, V_PAUSE=3.3, V_OFF=2.4, SLOW_FROM=2.6, SLOW_TO=4.6;
-// Kessler's position in the video frame (960x492), checked by eye on the clip
-const MK=[[1.9,602,228],[2.0,600,225],[3.0,555,195],[3.4,548,180]];
+// Clip of 9 Nov 2026 (1280x656): starts 1.233 s later than the first capture, so all video times below are shifted.
+const V_START=0.667, V_PAUSE=2.067, V_OFF=3.633, SLOW_FROM=1.367, SLOW_TO=3.367;
+// Kessler's position in the video frame, in 960x492 units (the clip is 1280x656, same framing), checked by eye on the clip
+const MK=[[0.667,602,228],[0.767,600,225],[1.767,555,195],[2.167,548,180]];
 function markAt(t){if(t<MK[0][0]-0.01||t>MK[MK.length-1][0])return null;
   for(let i=1;i<MK.length;i++)if(t<=MK[i][0]){const a=MK[i-1],c=MK[i],f=Math.max(0,(t-a[0])/(c[0]-a[0]));return[lerp(a[1],c[1],f),lerp(a[2],c[2],f)];}}
 const vid=$('vid');
@@ -545,15 +682,17 @@ function askQuestion(){
   phase('vote');st.freezeAt=performance.now();
 }
 // zoomed slow-motion replay for newcomers: the view follows Kessler, then the puck towards the net
-const ZOOM_FROM=1.9, ZOOM_TO=4.9, ZOOM_SCALE=2.1;
-const ZO=[[1.9,602,228],[3.0,555,195],[3.4,548,180],[3.9,520,200],[4.4,420,235],[4.9,330,250]];
+const ZOOM_FROM=0.667, ZOOM_TO=3.667, ZOOM_SCALE=2.1;
+const ZO=[[0.667,602,228],[1.767,555,195],[2.167,548,180],[2.667,520,200],[3.167,420,235],[3.667,330,250]];
 function zoomOrigin(t){if(t<=ZO[0][0])return ZO[0].slice(1);for(let i=1;i<ZO.length;i++)if(t<=ZO[i][0]){const a=ZO[i-1],c=ZO[i],f=(t-a[0])/(c[0]-a[0]);return[lerp(a[1],c[1],f),lerp(a[2],c[2],f)];}return ZO[ZO.length-1].slice(1);}
 function setZoom(on){const s=$('stage');s.classList.toggle('zoomed',on);if(!on){s.style.transform='';}}
 function zoomReplay(){
   if(st.use2D){askQuestion();return;}
   phase('zoom');st.mode='zoom';$('vidTag').textContent='SLOW MOTION · ZOOM';
-  seek(vid,ZOOM_FROM);vid.playbackRate=0.4;setZoom(true);
-  const p=vid.play();if(p&&p.catch)p.catch(()=>askQuestion());
+  vid.playbackRate=0.4;setZoom(true);
+  // wait for the seek: calling play() on an ended video would restart it from 0
+  const go=()=>{const p=vid.play();if(p&&p.catch)p.catch(()=>askQuestion());};
+  vid.addEventListener('seeked',go,{once:true});seek(vid,ZOOM_FROM);
 }
 $('skipZoom').onclick=()=>askQuestion();
 function playClip(slow){
@@ -569,7 +708,8 @@ vid.addEventListener('ended',()=>{if(st.phase==='play'){if(!st.zoomDone){st.zoom
 function focusRing(r){r.ov.innerHTML='';const p=playerAt('72d',T_SHOT);
   el('circle',{cx:p[0],cy:-p[1],r:2.2,fill:'rgba(255,26,26,.16)',stroke:'var(--accent)','stroke-width':'.22'},r.ov);}
 function startWatch(){
-  st={vote:null,t:null,pts:0,freezeAt:0,phase:'setup',use2D:false,story:0,zoomDone:false};setPts(0);
+  st={vote:null,t:null,pts:0,freezeAt:0,phase:'setup',use2D:false,story:0,zoomDone:false,ref:null};setPts(0);
+  {const g=$('refGo');g.classList.remove('done');$('refGoTxt').textContent='Key decision 2 · Be the referee';g.querySelector('.go').textContent='▶';}
   show(1);$('vidWrap').hidden=false;$('rinkWrap').hidden=true;$('vidTag').textContent='LIVE CLIP';
   setZoom(false);vid.pause();vid.playbackRate=1;seek(vid,2.0);phase('setup');
   if(window.NO_VIDEO||vid.error){st.use2D=true;$('vidWrap').hidden=true;$('rinkWrap').hidden=false;overlay(r1,false);focusRing(r1);draw(r1,0,VB_FULL);}
@@ -630,19 +770,117 @@ document.querySelectorAll('.vote').forEach(b=>b.onclick=()=>{
 });
 $('toVerdict').onclick=()=>{
   const match=st.vote===EXPERT, quick=match&&st.t<5;
-  const rows=[['Vote',10],['Same as the expert',match?20:0],['Quick read (under 5 s)',quick?10:0]];
-  const total=rows.reduce((a,r)=>a+r[1],0);
-  $('ledger').innerHTML=rows.map(r=>`<div><span${r[1]?'':' class="muted"'}>${r[0]}</span><span>+${r[1]}</span></div>`).join('')+`<div class="tot"><span>Total</span><span>${total} pts</span></div>`;
+  const rows=[['#Decision 1 · Kessler\'s pass'],['Vote',10],['Same as the expert',match?20:0],['Quick read (under 5 s)',quick?10:0]];
+  if(st.ref)rows.push(['#Decision 2 · Referee call'],['Right call',st.ref.ok?20:0]);
+  const total=rows.reduce((a,r)=>a+(r[1]||0),0);
+  $('ledger').innerHTML=rows.map(r=>r[0][0]==='#'?`<p class="grp">${r[0].slice(1)}</p>`:`<div><span${r[1]?'':' class="muted"'}>${r[0]}</span><span>+${r[1]}</span></div>`).join('')+`<div class="tot"><span>Total</span><span>${total} pts</span></div>`;
+  $('recapYou').textContent=st.vote==null?'–':T(LABELS[st.vote]);$('recapExp').textContent=T(LABELS[EXPERT]);
+  $('recapYou').style.color=st.vote===EXPERT?'var(--good)':'var(--text)';
+  {const v=$('vid3');v.pause();$('mark3').hidden=false;}
   setPts(total);show(4);
 };
 $('toCard').onclick=()=>{
-  const lvl=st.pts>=40?'Coach':st.pts>=30?'Scout':'Rookie';
+  const lvl=st.pts>=(st.ref?50:40)?'Coach':st.pts>=30?'Scout':'Rookie';
   $('lvl').innerHTML=`I read the play like a <em>${lvl}</em>`;
   $('cNext').innerHTML='<span>Streak: 1 game in a row</span> · '+(lvl==='Coach'?'<span>Top level reached</span>':'<span>Next level:</span> <span>'+(lvl==='Rookie'?'Scout':'Coach')+'</span>');
   $('cPts').textContent=st.pts;$('cTime').textContent=st.t.toFixed(1)+' s';show(5);
 };
+$('again3').onclick=()=>{const v=$('vid3');$('mark3').hidden=true;v.preload='auto';
+  const go=()=>{const p=v.play();if(p&&p.catch)p.catch(()=>{});};
+  if(v.readyState<1){v.addEventListener('loadedmetadata',()=>{v.addEventListener('seeked',go,{once:true});seek(v,V_START);},{once:true});v.load();}
+  else{v.addEventListener('seeked',go,{once:true});seek(v,V_START);}};
+$('vid3').addEventListener('ended',()=>{$('mark3').hidden=false;});
 $('shareBtn').onclick=()=>toast('In the real app, this card goes straight to Instagram or WhatsApp.');
 $('mvpBtn').onclick=()=>toast('This opens the AwArt MVP vote, already live with EHC Basel and Xamax.');
+// ---------- Key decision 2: referee call (icing waved off), P1 2:00, real Wisehockey positions ----------
+// time 0 = Egli's dump (Timestamp 1767179589140); snapshots at the tracked events
+const RACE={
+  t:[0,0.54,1.72,5.08],
+  p:{
+    '29d':[[26.4,1.4],[26.2,1.5],[26.1,0.8],[26.3,0]],
+    '38d':[[21.8,0.4],[20.4,0.5],[16.2,0.2],[10.7,9.4]],
+    '36d':[[10.3,5.3],[7.5,7.2],[-0.6,9.6],[-28.4,7.1]],
+    '66d':[[17.1,10.7],[14.5,10.4],[6.8,8.9],[-19.5,4.2]],
+    '96d':[[12.1,14.6],[11.7,14.8],[8.5,14],[-11.9,11.3]],
+    '25u':[[15.6,14.1],[13.8,13.9],[9.3,13.2],[-9.4,11.9]],
+    '30u':[[-27,0],[-27.2,0.1],[-26.1,0.3],[-26.1,0.1]],
+    '22u':[[9.2,13.7],[7.7,13.9],[2.7,14.9],[-18.8,8.3]],
+    '11u':[[14.2,11.2],[11.7,11.5],[6.4,11],[-11.2,7.8]],
+    '21u':[[27.1,5.8],[26.3,7.4],[21.3,8.3],[1.3,3]],
+    '23u':[[5,3.1],[3.3,5.1],[-2.3,8.6],[-27.7,7.4]]
+  },
+  puck:[[0,12.1,14.6],[0.54,7.2,14.9],[1.72,-7.1,14.8],[3.6,-29.4,9.5],[5.08,-29.9,8]]
+};
+const rvid=$('rvid'),rvid2=$('rvid2');
+const REF_ASK_AT=10.35, HIDE_FROM=8.2, SIGNAL_FROM=7.6;
+let raceR=null,raceAnim=0;
+function racePos(id,t){const T=RACE.t,P=RACE.p[id];if(t<=T[0])return P[0];
+  for(let i=1;i<T.length;i++)if(t<=T[i]){const f=(t-T[i-1])/(T[i]-T[i-1]);return[lerp(P[i-1][0],P[i][0],f),lerp(P[i-1][1],P[i][1],f)];}
+  return P[P.length-1];}
+function racePuck(t){const K=RACE.puck;if(t<=K[0][0])return[K[0][1],K[0][2]];
+  for(let i=1;i<K.length;i++)if(t<=K[i][0]){const f=(t-K[i-1][0])/(K[i][0]-K[i-1][0]);return[lerp(K[i-1][1],K[i][1],f),lerp(K[i-1][2],K[i][2],f)];}
+  const l=K[K.length-1];return[l[1],l[2]];}
+function buildRace(){
+  const svg=$('rink3');const r=buildRink(svg);
+  Object.keys(r.nodes).forEach(k=>{r.nodes[k].remove();});
+  const nodes={};
+  Object.keys(RACE.p).forEach(id=>{const d=id.endsWith('d');const key=id==='36d'||id==='23u';const g=el('g',{opacity:key?1:.45},svg);
+    if(key)el('circle',{r:1.9,fill:'none',stroke:d?'var(--davos)':'#FFFFFF','stroke-width':'.25'},g);
+    el('circle',{r:1.05,fill:d?'var(--davos)':'var(--opp)',stroke:d?'#B08A10':'#9FB2C3','stroke-width':'.14'},g);
+    const t=el('text',{'text-anchor':'middle','dominant-baseline':'central','font-size':'.95','font-weight':'700','font-family':'Arial, sans-serif',fill:d?'var(--davos-ink)':'var(--opp-ink)'},g);
+    t.textContent=id.slice(0,-1);nodes[id]=g;});
+  svg.appendChild(nodes['36d']); // Knak on top of Pohlkamp
+  nodes.puck=el('circle',{r:.42,fill:'#0E0E10'},svg);
+  const lab=(txt,x,y,c)=>{const t=el('text',{x,y,'font-size':'1.25','font-weight':'700','font-family':'Arial, sans-serif',fill:c,'text-anchor':'middle'},svg);t.textContent=txt;return t;};
+  nodes.lk=lab('Knak',0,0,'#B08A10');nodes.lp=lab('Pohlkamp',0,0,'#1A253E');
+  nodes.gap=lab('5.3 m',0,0,'var(--accent)');
+  raceR={svg,nodes};
+}
+function drawRace(t){const n=raceR.nodes;
+  Object.keys(RACE.p).forEach(id=>{const p=racePos(id,t);n[id].setAttribute('transform',`translate(${p[0]} ${-p[1]})`);});
+  const pk=racePuck(t);n.puck.setAttribute('cx',pk[0]);n.puck.setAttribute('cy',-pk[1]);
+  const k=racePos('36d',t),q=racePos('23u',t);
+  n.lk.setAttribute('x',Math.max(-27,k[0]));n.lk.setAttribute('y',-k[1]+3);n.lp.setAttribute('x',Math.max(-25.5,q[0]));n.lp.setAttribute('y',-q[1]-2.4);
+  n.gap.setAttribute('visibility',t<0.6?'visible':'hidden');n.gap.setAttribute('x',(k[0]+q[0])/2);n.gap.setAttribute('y',-(k[1]+q[1])/2+3.4);
+}
+function playRace(){if(!raceR)buildRace();const my=++raceAnim;
+  if(reduce){drawRace(5.08);return;}
+  drawRace(0);let start=null;const SPEED=0.75;
+  function f(ts){if(my!==raceAnim)return;if(start===null)start=ts+500;const t=Math.max(0,Math.min(5.08,(ts-start)/1000*SPEED));drawRace(t);if(t<5.08)requestAnimationFrame(f);}
+  requestAnimationFrame(f);}
+function refPhase(p){$('refSetup').hidden=p!=='setup';$('refWatching').hidden=p!=='play';$('refAsk').hidden=p!=='ask';$('refReveal').hidden=p!=='reveal';$('refVidWrap').hidden=p==='reveal';st.refPhase=p;}
+function startRef(){
+  show(6);refPhase('setup');rvid.pause();seek(rvid,0);$('hideTag').hidden=true;$('rvidTag').textContent='LIVE CLIP';
+  document.querySelectorAll('#refOpts .vote').forEach(b=>b.classList.remove('picked'));
+}
+function playRef(){
+  refPhase('play');$('rvidTag').textContent='LIVE CLIP';
+  const go=()=>{const p=rvid.play();if(p&&p.catch)p.catch(()=>{refPhase('ask');});};
+  if(rvid.currentTime>0.05){rvid.addEventListener('seeked',go,{once:true});seek(rvid,0);}else go();
+}
+rvid.addEventListener('timeupdate',()=>{
+  $('hideTag').hidden=!(rvid.currentTime>=HIDE_FROM);
+  if(st.refPhase==='play'&&rvid.currentTime>=REF_ASK_AT){rvid.pause();refPhase('ask');$('rvidTag').textContent='DECISION MOMENT';}
+});
+rvid.addEventListener('ended',()=>{if(st.refPhase==='play'){refPhase('ask');$('rvidTag').textContent='DECISION MOMENT';}});
+rvid.addEventListener('error',()=>{if(st.refPhase==='play')refPhase('ask');});
+function playSignal(){const go=()=>{const p=rvid2.play();if(p&&p.catch)p.catch(()=>{});};rvid2.addEventListener('seeked',go,{once:true});seek(rvid2,SIGNAL_FROM);}
+$('refGo').onclick=()=>{if(!st.ref)startRef();};
+$('refPlay').onclick=playRef;
+$('refAgain').onclick=playRef;
+document.querySelectorAll('#refOpts .vote').forEach(b=>b.onclick=()=>{
+  const ok=b.dataset.r==='noicing';st.ref={answer:b.dataset.r,ok};rvid.pause();
+  setPts(st.pts+(ok?20:0));
+  $('refResult').className='result '+(ok?'ok':'ko');$('refIc').textContent=ok?'✓':'✗';
+  $('refRes1').textContent=ok?'Right call! +20 pts':(b.dataset.r==='unsure'?'Tricky one!':'Not this time');
+  refPhase('reveal');window.scrollTo(0,0);playRace();playSignal();
+});
+$('raceAgain').onclick=playRace;
+$('rvid2Again').onclick=playSignal;
+$('refBack').onclick=()=>{rvid2.pause();raceAnim++;
+  $('refGo').classList.add('done');$('refGoTxt').textContent='Key decision 2 · Referee call';
+  $('refGo').querySelector('.go').textContent=st.ref&&st.ref.ok?'✓ +20':'✓';show(3);};
+
 show(0);applyLang();
 })();
 </script>
